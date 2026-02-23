@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardápio — Sabor & Arte</title>
+  <meta name="description" content="Cardápio digital — faça seu pedido online">
+
+  <!-- ── CSS externo — ZERO CSS inline ── -->
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/menu.css">
+  <link rel="stylesheet" href="assets/css/cart.css">
+
+  <!-- Configuração da loja (não contém secrets) -->
+  <script>
+    window.APP_CONFIG = {
+      apiBase: 'https://api.seudominio.com/v1',
+      lojaId:  'demo',
+    };
+  </script>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       TOPBAR
+  ══════════════════════════════════════ -->
+  <header class="topbar" role="banner">
+    <div class="topbar-brand">
+      <span class="topbar-logo" id="loja-nome">🍔 Sabor & Arte</span>
+      <span class="topbar-slogan" id="loja-slogan">Descubra nossos pratos especiais</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-status" id="loja-status"></span>
+      <span class="badge badge-green" id="badge-aberto">● Aberto</span>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════
+       PAGE WRAPPER
+  ══════════════════════════════════════ -->
+  <div class="page-wrapper">
+
+    <!-- LEFT: Produtos -->
+    <main class="content-area" role="main" id="menu-area">
+      <div class="cat-bar" id="cat-pills" role="navigation" aria-label="Filtrar por categoria"></div>
+      <div id="menu-products" aria-live="polite"></div>
+      <div id="menu-empty" class="empty-state hidden">
+        <div class="empty-icon">🍴</div>
+        <p>Nenhum item disponível no momento</p>
+      </div>
+    </main>
+
+    <!-- RIGHT: Carrinho -->
+    <aside class="cart-sidebar" role="complementary" aria-label="Carrinho de compras">
+
+      <div class="cart-header">
+        <span class="cart-title">🛒 Carrinho</span>
+        <span class="cart-count" id="cart-count" aria-live="polite">0</span>
+      </div>
+
+      <div class="cart-items-list" id="cart-items-list">
+        <div class="cart-empty" id="cart-empty">
+          <span class="cart-empty-icon">🛒</span>
+          <p class="cart-empty-title">Carrinho vazio</p>
+          <p class="cart-empty-sub">Clique nos produtos para adicionar</p>
+        </div>
+        <div id="cart-list" aria-live="polite"></div>
+      </div>
+
+      <div class="cart-notes-area hidden" id="cart-notes-area">
+        <label class="cart-notes-label" for="cart-notes">Observações</label>
+        <textarea
+          class="cart-notes-input"
+          id="cart-notes"
+          rows="2"
+          placeholder="Ex: sem cebola, ponto da carne..."
+          maxlength="300"
+        ></textarea>
+      </div>
+
+      <div class="cart-summary">
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span id="cart-subtotal">R$ 0,00</span>
+        </div>
+        <div class="summary-row discount hidden" id="row-desconto">
+          <span>Desconto</span>
+          <span id="cart-desconto">-R$ 0,00</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span id="cart-total">R$ 0,00</span>
+        </div>
+
+        <div class="coupon-row">
+          <input
+            type="text"
+            class="coupon-input"
+            id="coupon-input"
+            placeholder="Cupom de desconto"
+            autocomplete="off"
+            autocapitalize="characters"
+            maxlength="30"
+            aria-label="Código do cupom"
+          >
+          <button class="btn" id="btn-aplicar-cupom" type="button">Aplicar</button>
+        </div>
+
+        <button class="btn-checkout" id="btn-checkout" type="button" disabled>
+          Fazer Pedido
+        </button>
+        <button class="btn-clear" id="btn-clear" type="button">Limpar carrinho</button>
+      </div>
+
+    </aside>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       MODAL: CHECKOUT
+  ══════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-checkout" role="dialog" aria-modal="true" aria-labelledby="checkout-title">
+    <div class="modal checkout-modal">
+
+      <div class="modal-header">
+        <h2 class="modal-title" id="checkout-title">🧾 Finalizar Pedido</h2>
+        <button class="modal-close" type="button" data-close-checkout aria-label="Fechar">×</button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- Tabs Retirada / Entrega -->
+        <div class="order-type-tabs" role="tablist" aria-label="Tipo de pedido">
+          <button class="order-type-tab active" id="tab-retirada" role="tab" aria-selected="true" type="button">
+            🏪 Retirada no Balcão
+          </button>
+          <button class="order-type-tab" id="tab-entrega" role="tab" aria-selected="false" type="button">
+            🛵 Entrega
+          </button>
+        </div>
+
+        <!-- Seção: Retirada -->
+        <section class="order-section active" id="section-retirada" role="tabpanel">
+          <div class="form-group">
+            <label class="form-label" for="r-nome">Nome completo *</label>
+            <input class="form-input" id="r-nome" type="text" placeholder="Seu nome" autocomplete="given-name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="r-telefone">Telefone</label>
+            <input class="form-input" id="r-telefone" type="tel" placeholder="(11) 99999-0000" autocomplete="tel">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="r-pagamento">Forma de Pagamento</label>
+            <select class="form-select" id="r-pagamento">
+              <option value="pix">🟢 PIX</option>
+              <option value="dinheiro">💵 Dinheiro</option>
+              <option value="credito">💳 Cartão de Crédito</option>
+              <option value="debito">💳 Cartão de Débito</option>
+            </select>
+          </div>
+          <div class="form-group hidden" id="troco-group-r">
+            <label class="form-label" for="r-troco">Troco para (R$)</label>
+            <input class="form-input" id="r-troco" type="number" min="0" step="0.01" placeholder="Ex: 50">
+          </div>
+        </section>
+
+        <!-- Seção: Entrega -->
+        <section class="order-section" id="section-entrega" role="tabpanel">
+          <div class="form-grid cols-2">
+            <div class="form-group">
+              <label class="form-label" for="e-nome">Nome completo *</label>
+              <input class="form-input" id="e-nome" type="text" placeholder="Seu nome" autocomplete="given-name" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="e-telefone">Telefone *</label>
+              <input class="form-input" id="e-telefone" type="tel" placeholder="(11) 99999-0000" autocomplete="tel" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="e-endereco">Endereço completo *</label>
+            <input class="form-input" id="e-endereco" type="text" placeholder="Rua, número, complemento" autocomplete="street-address" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Selecione seu bairro *</label>
+            <div class="bairro-grid" id="bairro-grid" role="radiogroup" aria-label="Bairros disponíveis"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="e-pagamento">Forma de Pagamento</label>
+            <select class="form-select" id="e-pagamento">
+              <option value="pix">🟢 PIX</option>
+              <option value="dinheiro">💵 Dinheiro</option>
+              <option value="credito">💳 Cartão de Crédito</option>
+              <option value="debito">💳 Cartão de Débito</option>
+            </select>
+          </div>
+          <div class="form-group hidden" id="troco-group-e">
+            <label class="form-label" for="e-troco">Troco para (R$)</label>
+            <input class="form-input" id="e-troco" type="number" min="0" step="0.01" placeholder="Ex: 50">
+          </div>
+        </section>
+
+        <!-- Resumo do pedido -->
+        <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
+        <p class="form-label" style="margin-bottom:8px">Resumo do Pedido</p>
+        <div id="checkout-summary"></div>
+        <div class="summary-row"><span>Subtotal</span><span id="co-subtotal">R$ 0,00</span></div>
+        <div class="summary-row hidden" id="co-row-frete"><span>Taxa de entrega</span><span id="co-frete">R$ 0,00</span></div>
+        <div class="summary-row discount hidden" id="co-row-desconto"><span>Desconto</span><span id="co-desconto">-R$ 0,00</span></div>
+        <div class="summary-row total" style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px">
+          <span>Total</span><span id="co-total">R$ 0,00</span>
+        </div>
+
+      </div><!-- /modal-body -->
+
+      <div class="modal-footer">
+        <button class="btn" type="button" data-close-checkout>Cancelar</button>
+        <button class="btn btn-primary" type="button" id="btn-confirmar-pedido">✅ Confirmar Pedido</button>
+      </div>
+
+    </div><!-- /modal -->
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TOAST
+  ══════════════════════════════════════ -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- ══════════════════════════════════════
+       JS — MÓDULOS EXTERNOS (zero inline)
+  ══════════════════════════════════════ -->
+  <script type="module" src="assets/js/ui.js"></script>
+
+</body>
+</html>
