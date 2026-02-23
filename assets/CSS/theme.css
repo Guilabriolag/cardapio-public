@@ -1,0 +1,103 @@
+/* ═══════════════════════════════════════
+   theme.css — Variáveis, cores e fontes
+   Cardápio Digital SaaS — Repo Público
+═══════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
+
+:root {
+  /* ── Cores base ── */
+  --bg:            #0f0e0c;
+  --surface:       #1a1915;
+  --surface2:      #24221e;
+  --border:        #2e2c27;
+
+  /* ── Texto ── */
+  --text:          #f0ede6;
+  --text-muted:    #8a8778;
+  --text-dim:      #5a5850;
+
+  /* ── Accent ── */
+  --accent:        #e8a020;
+  --accent-dim:    rgba(232, 160, 32, 0.12);
+  --accent-hover:  #f0b040;
+
+  /* ── Estados ── */
+  --green:         #4caf6e;
+  --green-dim:     rgba(76, 175, 110, 0.12);
+  --red:           #e85050;
+  --red-dim:       rgba(232, 80, 80, 0.12);
+  --blue:          #5090e8;
+  --blue-dim:      rgba(80, 144, 232, 0.12);
+
+  /* ── Tipografia ── */
+  --font-display:  'Syne', sans-serif;
+  --font-body:     'DM Sans', sans-serif;
+
+  /* ── Tamanhos ── */
+  --text-xs:   11px;
+  --text-sm:   13px;
+  --text-base: 15px;
+  --text-lg:   17px;
+  --text-xl:   20px;
+  --text-2xl:  24px;
+  --text-3xl:  30px;
+
+  /* ── Espaçamento ── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ── Border radius ── */
+  --radius-sm:  6px;
+  --radius:     10px;
+  --radius-lg:  14px;
+  --radius-xl:  20px;
+  --radius-full: 9999px;
+
+  /* ── Sombras ── */
+  --shadow-sm:  0 2px 8px rgba(0,0,0,0.2);
+  --shadow:     0 4px 16px rgba(0,0,0,0.3);
+  --shadow-lg:  0 8px 32px rgba(0,0,0,0.4);
+
+  /* ── Transições ── */
+  --transition-fast: 0.15s ease;
+  --transition:      0.2s ease;
+  --transition-slow: 0.3s ease;
+
+  /* ── Layout ── */
+  --sidebar-width:   220px;
+  --cart-width:      340px;
+  --topbar-height:   56px;
+  --max-content:     960px;
+}
+
+/* ── Tema claro (futuro) ── */
+[data-theme="light"] {
+  --bg:         #f8f7f4;
+  --surface:    #ffffff;
+  --surface2:   #f3f2ef;
+  --border:     #e5e3dd;
+  --text:       #1a1815;
+  --text-muted: #6b6960;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  line-height: 1.2;
+}
